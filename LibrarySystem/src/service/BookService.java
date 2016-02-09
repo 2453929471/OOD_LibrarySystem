@@ -51,9 +51,9 @@ public class BookService {
     }
 
     //for admin
-    public void addBook(Book book) throws SQLException{
+    public int addBook(Book book) throws SQLException{
         BookDaoImpl bdi=new BookDaoImpl();
-        bdi.addBook(book);
+        return bdi.addBook(book);
     }
 
 
@@ -77,14 +77,20 @@ public class BookService {
     }
 
     //common
-    public Book getDetail(int bid) throws SQLException{
+    public Book getDetail(String isbn) throws SQLException{
         BookDaoImpl bdi=new BookDaoImpl();
-        return bdi.getDetail(bid);
+        return bdi.getDetail(isbn);
     }
 
     //for admin
     public void delBook(int bid) throws SQLException{
         BookDaoImpl bdi=new BookDaoImpl();
         bdi.delBook(bid);
+    }
+
+    //common
+    public List queryUserInfo(int uid) throws SQLException{
+        BookDaoImpl bdi=new BookDaoImpl();
+        return bdi.queryUserInfo(uid);
     }
 }

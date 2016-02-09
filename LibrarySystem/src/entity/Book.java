@@ -1,5 +1,7 @@
 package entity;
 
+import java.sql.Timestamp;
+
 /**
  * Created by gao on 15/10/16.
  */
@@ -12,7 +14,7 @@ public class Book {
     private String price;
     private String explanation;
     private String uid;
-    private String borrowtime;
+    private Timestamp borrowtime;
     private int cid;
     private String category;
     private int num;
@@ -81,11 +83,11 @@ public class Book {
         this.uid = uid;
     }
 
-    public String getBorrowtime() {
+    public Timestamp getBorrowtime() {
         return borrowtime;
     }
 
-    public void setBorrowtime(String borrowtime) {
+    public void setBorrowtime(Timestamp borrowtime) {
         this.borrowtime = borrowtime;
     }
 
@@ -107,26 +109,6 @@ public class Book {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
-    }
-
-    //for user advance search
-    public Book(String bname, String publisher, String author, String isbn, int cid) {
-        this.bname = bname;
-        this.publisher = publisher;
-        this.author = author;
-        this.isbn = isbn;
-        this.cid = cid;
-    }
-
-    //for user search result
-    public Book(String bname, String author, String isbn, String publisher, String price, String explanation, String category) {
-        this.bname = bname;
-        this.author = author;
-        this.isbn = isbn;
-        this.publisher = publisher;
-        this.price = price;
-        this.explanation = explanation;
-        this.category = category;
     }
 
     public String getCategory() {

@@ -5,16 +5,28 @@ package entity;
  */
 public class User {
     private int uid;
+    private String pwd;
     private String name;
     private String phone;
     private String email;
     private String sfz;
+    private int bnum;
+    private int authority;
 
-    public User(String name, String phone, String email, String sfz) {
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.sfz = sfz;
+    public int getBnum() {
+        return bnum;
+    }
+
+    public void setBnum(int bnum) {
+        this.bnum = bnum;
+    }
+
+    public int getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(int authority) {
+        this.authority = authority;
     }
 
     public User() {
@@ -22,7 +34,6 @@ public class User {
     }
 
     public int getUid() {
-
         return uid;
     }
 
@@ -60,5 +71,14 @@ public class User {
 
     public void setSfz(String sfz) {
         this.sfz = sfz;
+    }
+
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
     }
 }

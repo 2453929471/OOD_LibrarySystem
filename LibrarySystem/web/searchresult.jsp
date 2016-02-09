@@ -12,7 +12,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Creativ</title>
+  <title>MyLibrary</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
@@ -52,14 +52,14 @@
   <div class="container">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
-      <a class="navbar-brand" href="index.html">MyLibrary<strong><span class="color">.</span></strong></a> </div>
+      <a class="navbar-brand" href="index">MyLibrary<strong><span class="color">.</span></strong></a> </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="index.jsp">Home</a></li>
-        <li><a href="index.jsp#advance-search" >Advanced Search</a></li>
-        <li><a href="index.jsp">Portfolio</a></li>
+        <li><a href="index">Home</a></li>
+        <li><a href="index#advance-search" class="page-scroll">Advanced Search</a></li>
+        <li><a href="queryUserInfo?uid=${sessionScope.uid}" class="page-scroll">Profile</a></li>
       </ul>
     </div>
     <!-- /.navbar-collapse -->
@@ -71,7 +71,7 @@
 
 <!-- Portfolio Section -->
 <div id="works-section">
-  <div class="container"> <!-- Container -->
+  <div class="container" style="height: 100%"> <!-- Container -->
     <div class="section-title text-center center">
       <h2>Search <strong>Results</strong></h2>
         <hr style="margin:0 auto">
@@ -91,10 +91,11 @@
           <thead>
           <tr>
             <th class="center" style="width: 1%">No.</th>
-            <th>Title</th>
+            <th class="center">Title</th>
             <th class="center">Author</th>
             <th class="center">Publisher</th>
             <th class="center">Category</th>
+            <th class="center">Amount</th>
             <th class="center">Operation</th>
           </tr>
           </thead>
@@ -103,10 +104,11 @@
           <tr class="selectable">
             <td class="center"><s:property value="#L.index+1"/></td>
             <td class="important"><span class="glyphicons up_arrow btn-success btn-action single"><i></i></span><s:property value="#book.bname"/></td>
-            <td class="center" style="max-width: 15px;"><s:property value="#book.author"/></td>
+            <td class="center"><s:property value="#book.author"/></td>
             <td class="center"><s:property value="#book.publisher"/></td>
             <td class="center"><s:property value="#book.category"/></td>
-            <td><a href="detail?bid=<s:property value='#book.bid'/>">detail</a> </td>
+            <td class="center" style="max-width: 10px;"><s:property value="#book.num"/></td>
+            <td class="center" style="max-width: 10px;"><a href="detail?isbn=<s:property value='#book.isbn'/>">detail</a> </td>
           </tr>
           </s:iterator>
           </tbody>
@@ -130,10 +132,10 @@
 
       </div>
   </div>
+
 </div>
 
-
-<nav id="footer" style="height:30px;position:fixed;bottom:0px;left:0px;width: 100%">
+<nav id="footer" style="height:30px;position:fixed;bottom:0px;left:0px;width: 100%" >
   <div class="container" >
     <div class="pull-right fnav">
     </div>

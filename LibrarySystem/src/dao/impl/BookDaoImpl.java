@@ -8,10 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,65 +66,92 @@ public class BookDaoImpl extends DBUtil{
         Book book=new Book();
         book.setIsbn(ISBN);
         String amazonURL="http://www.amazon.com/gp/search/ref=sr_adv_b/?search-alias=stripbooks&field-isbn="+ISBN;
-        //System.out.println(amazonURL);
-        for(int i=0;i<3;i++){
-            org.jsoup.Connection con=Jsoup.connect(amazonURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2");
-            con.timeout(5000);
-            Document doc=con.get();
-            Element e1=doc.select("[class=a-link-normal s-access-detail-page  a-text-normal]").first();
-            if(e1==null){
-                //System.out.println("e1==null");
+        System.out.println(amazonURL);
+        String jumpURL=null;
+        for(int i=0;i<5;i++) {
+            org.jsoup.Connection con = Jsoup.connect(amazonURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2");
+            con.timeout(10000);
+            Document doc = con.get();
+            //System.out.println(doc.body());
+            Element e1 = doc.select("[class=a-link-normal s-access-detail-page  a-text-normal]").first();
+            if (e1 == null) {
+                System.out.println("e1==null");
                 continue;
             }
-            String jumpURL=e1.attr("href");
-            //System.out.println(jumpURL);
-            String bname=e1.attr("title");
-            //System.out.println(bname);
-            if(bname!=null){
-                book.setBname(bname);
-            }
-            Element e2=doc.select("[class=a-row a-spacing-none]").get(0);
-            if(e2!=null){
-                String author=e2.text().replace("by", "");
-                book.setAuthor(author);
-            }
-            /**
-            Element e3=doc.select("[class=a-row a-spacing-none]").get(2).select("[class=a-size-small a-color-secondary a-text-strike]").first();
-            if(e3!=null){
-                String price=e3.text();
-                book.setPrice(price);
-            }**/
-            Element e3=doc.select("[class=a-size-small a-color-secondary a-text-strike]").first();
-            if(e3!=null){
-                String price=e3.text();
-                book.setPrice(price);
-            }else{
-                Element e33=doc.select("[class=a-row a-spacing-none]").get(2).select("[class=a-size-small a-color-secondary a-text-strike]").first();
-                String price=e33.text();
-                book.setPrice(price);
-            }
-            //一本书有多个category，但是为了方便，这里取第一个
-            Element ecat=doc.select("[id=ref_1000]").first().select("[class=refinementLink]").first();
-            if(ecat!=null){
-                book.setCategory(ecat.text());
-            }
-
-            for(int j=0;j<3;j++){
-                org.jsoup.Connection con2 = Jsoup.connect(jumpURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2");
-                con2.timeout(5000);
-                Document d2=con2.get();
-                Element desc=d2.select("[id=bookDescription_feature_div]").first().select("noscript div").first();
-                if(desc==null){
+                jumpURL = e1.attr("href");
+                if(jumpURL==null){
+                    System.out.println("jumpURL==null");
                     continue;
                 }
-                String explanation=desc.html();
-                book.setExplanation(explanation);
+                //System.out.println(jumpURL);
+                String bname = e1.attr("title");
+                //System.out.println(bname);
+                if (bname != null) {
+                    book.setBname(bname);
+                    System.out.println(book.getBname());
+                }
+
+            Element e2 = doc.select("[class=a-row a-spacing-none]").get(0);
+            if (e2 != null) {
+                String author = e2.text().replace("by", "");
+                book.setAuthor(author);
+                System.out.println(book.getAuthor());
+            }
+            /**
+             Element e3=doc.select("[class=a-row a-spacing-none]").get(2).select("[class=a-size-small a-color-secondary a-text-strike]").first();
+             if(e3!=null){
+             String price=e3.text();
+             book.setPrice(price);
+             }**/
+            Element e3 = doc.select("[class=a-size-small a-color-secondary a-text-strike]").first();
+            if (e3 != null) {
+                String price = e3.text();
+                book.setPrice(price);
+                System.out.println(book.getPrice());
+            } else {
+                Element e33 = doc.select("[class=a-row a-spacing-none]").get(2).select("[class=a-size-small a-color-secondary a-text-strike]").first();
+                String price = e33.text();
+                book.setPrice(price);
+                System.out.println(book.getPrice());
+            }
+            //一本书有多个category，但是为了方便，这里取第一个
+            Element ecat = doc.select("[id=ref_1000]").first().select("[class=refinementLink]").first();
+            if (ecat != null) {
+                book.setCategory(ecat.text());
+                System.out.println(book.getCategory());
+            }
+            break;
+        }
+        if(jumpURL!=null){
+            for(int j=0;j<5;j++){
+                org.jsoup.Connection con2 = Jsoup.connect(jumpURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2");
+                con2.timeout(10000);
+                Document d2=con2.get();
+                Element desc0=d2.select("[id=bookDescription_feature_div]").first();
+                if(desc0==null){
+                    System.out.println("desc0==null");
+                    continue;
+                }
+                    Element desc=desc0.select("noscript div").first();
+                    if(desc==null){
+                        System.out.println("desc==null");
+                        continue;
+                    }
+                    String explanation=desc.html();
+                    book.setExplanation(explanation);
+                    System.out.println(book.getExplanation());
+
                 Element pub=d2.select("[class=bucket]").get(1).select("li").first();
+                if(pub==null&&book.getPublisher()==null){
+                    System.out.println("pub==null");
+                    continue;
+                }
                 Elements xxx = pub.siblingElements();
                 for(Element p:xxx){
                     if(p.text().contains("Publisher")){
                         String publisher=p.text().replace("Publisher: ", "");
                         book.setPublisher(publisher);
+                        System.out.println(book.getPublisher());
                         break;
                     }
                 }
@@ -144,7 +168,7 @@ public class BookDaoImpl extends DBUtil{
     public List<Book> simpleSearch(String bname,int currentPage,int pageSize) throws SQLException{
         List<Book> blist=new ArrayList<Book>();
         Connection conn= DBUtil.getConn();
-        String sql="select * from book where bname like ? limit ?,?";
+        String sql="select bname,author,publisher,ISBN,cid,count(bid) from book where bname like ? GROUP by ISBN limit ?,?";
         PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql);
         pstmt.setString(1,'%'+bname+'%');
         pstmt.setInt(2, (currentPage - 1) * pageSize);
@@ -152,11 +176,13 @@ public class BookDaoImpl extends DBUtil{
         ResultSet rs = pstmt.executeQuery();
         while (rs.next()) {
             Book book=new Book();
-            book.setBid(rs.getInt(1));
-            book.setBname(rs.getString(2));
-            book.setPublisher(rs.getString(4));
-            book.setAuthor(rs.getString(3));
-            convertCidToCategory(conn,rs.getInt(10),book);
+            //book.setBid(rs.getInt(1));
+            book.setBname(rs.getString(1));
+            book.setPublisher(rs.getString(3));
+            book.setAuthor(rs.getString(2));
+            book.setIsbn(rs.getString(4));
+            convertCidToCategory(conn, rs.getInt(5), book);
+            book.setNum(rs.getInt(6));
             blist.add(book);
         }
         DBUtil.close(rs,pstmt,conn);
@@ -167,7 +193,7 @@ public class BookDaoImpl extends DBUtil{
     public int getResultCount(String bname) throws SQLException{
         int totalSize=0;
         Connection conn= DBUtil.getConn();
-        String sql="select * from book where bname like ?";
+        String sql="select * from book where bname like ? GROUP BY ISBN";
         PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql);
         pstmt.setString(1,'%'+bname+'%');
         ResultSet rs = pstmt.executeQuery();
@@ -204,6 +230,7 @@ public class BookDaoImpl extends DBUtil{
             sql+=(" and publisher like '%?%'");
             a4=1;
         }
+        sql+=" GROUP by ISBN";
         PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql);
         pstmt.setString(1,book.getCategory());
         if(a1==1){
@@ -237,7 +264,7 @@ public class BookDaoImpl extends DBUtil{
         Connection conn=DBUtil.getConn();
         //System.out.println(book.getBname() + "---" + book.getIsbn());
         //convertCategoryToCid(conn,book.getCategory(),book);
-        String sql="select * from book where book.cid=(select cid from category where cname=?)";
+        String sql="select bid,bname,author,publisher,ISBN,cid,count(bid) from book where book.cid=(select cid from category where cname=?)";
         int a1=0;
         int a2=0;
         int a3=0;
@@ -260,7 +287,7 @@ public class BookDaoImpl extends DBUtil{
             sql+=(" and publisher like '%?%'");
             a4=1;
         }
-        sql+=(" limit "+(currentPage-1)*pageSize+","+currentPage*pageSize);
+        sql+=(" GROUP BY ISBN limit "+(currentPage-1)*pageSize+","+currentPage*pageSize);
         System.out.println(sql);
         PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql);
         pstmt.setString(1,book.getCategory());
@@ -282,12 +309,14 @@ public class BookDaoImpl extends DBUtil{
             b.setBid(rs.getInt(1));
             b.setBname(rs.getString(2));
             b.setPublisher(rs.getString(4));
+            b.setIsbn(rs.getString(5));
             b.setAuthor(rs.getString(3));
+            b.setNum(rs.getInt(7));
             /**
             b.setIsbn(rs.getString(5));
             b.setPrice(rs.getString(6));
             b.setExplanation(rs.getString(7));**/
-            convertCidToCategory(conn,rs.getInt(10),b);
+            convertCidToCategory(conn, rs.getInt(6),b);
             blist.add(b);
         }
         DBUtil.close(rs,pstmt,conn);
@@ -297,12 +326,12 @@ public class BookDaoImpl extends DBUtil{
 
 
     //for admin addBook
-    public void addBook(Book book) throws SQLException{
+    public int addBook(Book book) throws SQLException{
         Connection conn=DBUtil.getConn();
         //System.out.println(book.getCategory()+"aaaaaa");
         convertCategoryToCid(conn,book.getCategory(),book);
         String sql="insert into book(bname,author,publisher,price,ISBN,explanation,cid) values(?,?,?,?,?,?,?)";
-        PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql);
+        PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         pstmt.setString(1,book.getBname());
         pstmt.setString(2,book.getAuthor());
         pstmt.setString(3,book.getPublisher());
@@ -310,12 +339,16 @@ public class BookDaoImpl extends DBUtil{
         pstmt.setString(5,book.getIsbn());
         pstmt.setString(6,book.getExplanation());
         pstmt.setInt(7,book.getCid());
-        int rows = pstmt.executeUpdate();
-        if (rows > 0 ) {
-            System.out.println( "operate successfully!" );
+        pstmt.executeUpdate();
+        ResultSet rs = pstmt.getGeneratedKeys();
+        int bid=0;
+        if (rs.next()) {
+            bid = rs.getInt(1);
+            //System.out.println("数据主键：" + bid);
         }
         pstmt.close();
         conn.close();
+        return bid;
     }
 
     //for admin, 传过来的是category， 写入数据库之前转成cid
@@ -355,11 +388,12 @@ public class BookDaoImpl extends DBUtil{
     }
 
     //common
-    public Book getDetail(int bid) throws SQLException{
+    public Book getDetail(String isbn) throws SQLException{
         Book book=new Book();
         Connection conn=DBUtil.getConn();
-        String sql="select * from book where bid="+bid;
+        String sql="select * from book where ISBN=?";
         PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql);
+        pstmt.setString(1,isbn);
         ResultSet rs = pstmt.executeQuery();
         if (rs.next()) {
             book.setBname(rs.getString(2));
@@ -388,6 +422,60 @@ public class BookDaoImpl extends DBUtil{
         conn.close();
     }
 
+
+    //common
+    public List queryUserInfo(int uid) throws SQLException {
+        List blist=new ArrayList();
+        Connection conn= DBUtil.getConn();
+        String sql="select bid,bname,ISBN,author,publisher,borrowtime from book where uid="+uid;
+        PreparedStatement pstmt=(PreparedStatement)conn.prepareStatement(sql);
+        ResultSet rs=pstmt.executeQuery();
+        while (rs.next()){
+            //System.out.println("rs.next():"+rs.next());
+            Book b=new Book();
+            b.setBid(rs.getInt(1));
+            b.setBname(rs.getString(2));
+            b.setIsbn(rs.getString(3));
+            b.setAuthor(rs.getString(4));
+            b.setPublisher(rs.getString(5));
+            b.setBorrowtime(rs.getTimestamp(6));
+            blist.add(b);
+        }
+        DBUtil.close(rs,pstmt,conn);
+        //System.out.println("blist==null:"+blist==null);
+        return blist;
+    }
+
+
+    //authority:1  5 books, 30days
+    //算了，反正小柳给c，判断能否借交给管理员好了。
+    public void borrow(int uid,int bid) throws SQLException{
+        Connection conn= DBUtil.getConn();
+        //System.out.print("uid:"+uid+"  bid:"+bid);
+        String sql="update book set uid=?,borrowtime=? where bid=?";
+        PreparedStatement pstmt=(PreparedStatement)conn.prepareStatement(sql);
+        pstmt.setInt(1,uid);
+        pstmt.setTimestamp(2,new java.sql.Timestamp(new java.util.Date().getTime()));
+        pstmt.setInt(3,bid);
+        int rows=pstmt.executeUpdate();
+        if(rows==1){
+            System.out.println("borrow success");
+        }
+        pstmt.close();
+        conn.close();
+    }
+
+    public void breturn(int bid) throws SQLException{
+        Connection conn=DBUtil.getConn();
+        String sql="update book set uid=null,borrowtime='0000-00-00 00:00:00' where bid="+bid;
+        PreparedStatement pstmt=conn.prepareStatement(sql);
+        int rows=pstmt.executeUpdate();
+        if(rows==1){
+            System.out.println("return success");
+        }
+        pstmt.close();
+        conn.close();
+    }
    /* public List<Line> getLines(String tid){
         List<Line> lines=new ArrayList<Line>();
         String sql="select * from line where tid=? order by station_seq";

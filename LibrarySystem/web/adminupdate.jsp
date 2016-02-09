@@ -80,7 +80,8 @@
       <ul class="nav navbar-nav navbar-right">
         <li><a href="borrow.jsp">BorrowService</a></li>
         <li><a href="return.jsp" >ReturnService</a></li>
-        <li><a href="index.jsp">BookManagement</a></li>
+          <li><a href="usermanagement.jsp" >UserManagement</a></li>
+          <li><a href="admin">BookManagement</a></li>
       </ul>
     </div>
     <!-- /.navbar-collapse -->

@@ -70,7 +70,8 @@
       <ul class="nav navbar-nav navbar-right">
         <li><a href="borrow.jsp">BorrowService</a></li>
         <li><a href="return.jsp" >ReturnService</a></li>
-        <li><a href="index.jsp">BookManagement</a></li>
+          <li><a href="usermanagement.jsp">UserManagement</a></li>
+        <li><a href="admin.action">BookManagement</a></li>
       </ul>
     </div>
     <!-- /.navbar-collapse -->
@@ -143,8 +144,8 @@
                   <td class="center"><s:property value="#book.publisher"/></td>
                   <td class="center"><s:property value="#book.category"/></td>
                   <td class="center">
-                      <a href="admin/detail?bid=<s:property value='#book.bid'/>" class="btn-action glyphicons eye_open btn-info">detail</a>|
-                      <a href="admin/preupd?bid=<s:property value='#book.bid'/>" class="btn-action glyphicons pencil btn-success">update</a>|
+                      <a href="admin/detail?isbn=<s:property value='#book.isbn'/>" class="btn-action glyphicons eye_open btn-info">detail</a>|
+                      <a href="admin/preupd?isbn=<s:property value='#book.isbn'/>" class="btn-action glyphicons pencil btn-success">update</a>|
                       <a href="admin/del?bid=<s:property value='#book.bid'/>" class="btn-action glyphicons remove_2 btn-danger">delete</a>
                   </td>
               </tr>

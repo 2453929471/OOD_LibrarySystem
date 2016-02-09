@@ -13,7 +13,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Creativ</title>
+  <title>MyLibrary</title>
 
   <!-- Bootstrap -->
   <link rel="stylesheet" type="text/css"  href="css/bootstrap.css">
@@ -56,9 +56,9 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="index.jsp">Home</a></li>
-        <li><a href="index.jsp#advance-search" >Advanced Search</a></li>
-        <li><a href="index.jsp">Portfolio</a></li>
+        <li><a href="index">Home</a></li>
+        <li><a href="index#advance-search" class="page-scroll">Advanced Search</a></li>
+        <li><a href="queryUserInfo?uid=${sessionScope.uid}" class="page-scroll">Profile</a></li>
       </ul>
     </div>
     <!-- /.navbar-collapse -->

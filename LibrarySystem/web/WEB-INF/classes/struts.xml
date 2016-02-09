@@ -12,20 +12,16 @@
                         <result name="ERROR" type="redirectAction">index</result>
                 </action>
                 <action name="login" class="action.UserAction" method="login">
-                        <result name="SUCCESS" type="redirect">/index.jsp</result>
-                        <result name="NOEXIST">/index.jsp</result>
-                        <result name="PWDWRONG">/index.jsp</result>
-                        <result name="ERROR">/index.jsp</result>
-                        <result name="ADMIN" type="redirectAction">admin</result>
+                        <result name="SUCCESS" type="chain">queryUserInfo</result>
+                        <result name="NOEXIST">/login.jsp</result>
+                        <result name="PWDWRONG">/login.jsp</result>
+                        <result name="ERROR">/login.jsp</result>
+                        <result name="ADMIN" type="redirectAction">
+                                <param name="actionName">admin</param>
+                                <param name="namespace">/admin</param>
+                        </result>
+                        <result name="input">/login.jsp</result>
                 </action>
-                <action name="admin" class="action.BookAction" method="getCat">
-                        <result name="SUCCESS">/admin2.jsp</result>
-                        <result name="ERROR" type="redirectAction">admin</result>
-                </action>
-
-                        <!--<action name="queryAllBook" class="action.BookAction" method="queryAllBook">-->
-                                <!--<result name="success">/index.jsp</result>-->
-                        <!--</action>-->
                 <action name="search" class="action.BookAction" method="simpleSearch">
                         <result name="SUCCESS" type="dispatcher">/searchresult.jsp</result>
                         <result name="NORESULT">/searchresult.jsp</result>
@@ -35,29 +31,51 @@
                         <result name="SUCCESS" type="dispatcher">/searchresult.jsp</result>
                         <result name="NORESULT">/searchresult.jsp</result>
                         <result name="ERROR" type="redirectAction">index</result>
+                        <result name="input" type="redirectAction">index</result>
                 </action>
                         <action name="detail" class="action.BookAction" method="getDetail">
                                <result name="SUCCESS">/detail.jsp</result>
                                 <result name="ERROR" type="redirectAction">index</result>
                         </action>
+                <action name="queryUserInfo" class="action.UserAction" method="queryUserInfo">
+                        <result name="NORESULT" type="redirect">/login.jsp</result>
+                        <result name="SUCCESS">/profile.jsp</result>
+                        <result name="ERROR">/login.jsp</result>
+                </action>
+                <action name="logout" class="action.UserAction" method="logout">
+                        <result name="SUCCESS" type="redirectAction">index</result>
+                </action>
 
         </package>
 
         <package name="admin" namespace="/admin" extends="struts-default">
-                <!--<action name="queryAllBook" class="action.BookAction" method="queryAllBook">-->
-                        <!--<result name="success">/index.jsp</result>-->
-                <!--</action>-->
+                <interceptors>
+                        <interceptor name="myinterceptor" class="interceptor.MyInterceptor"/>
+                        <interceptor-stack name="myInterceptorStack">
+                                <interceptor-ref name="myinterceptor"/>
+                                <interceptor-ref name="defaultStack"/>
+                        </interceptor-stack>
+                </interceptors>
+                <!-- 定义默认拦截器 -->
+                <default-interceptor-ref name="myInterceptorStack" />
+                <!-- 定义全局处理结果 -->
+                <global-results>
+                        <result name="login" type="redirect">/login.jsp</result>
+                </global-results>
+                <action name="getSub" class="action.UserAction" method="getCate">
+                        <result name="BORROW">/WEB-INF/borrow.jsp</result>
+                        <result name="RETURN">/WEB-INF/return.jsp</result>
+                        <result name="USER">/WEB-INF/usermanagement.jsp</result>
+                        <result name="ADDUSER">/WEB-INF/useradd.jsp</result>
+                        <result name="ADMIN" type="redirectAction">admin</result>
+                </action>
                 <action name="preadd" class="action.BookAction" method="preadd">
-                        <result name="SUCCESS">/adminadd.jsp</result>
+                        <result name="SUCCESS">/WEB-INF/adminadd.jsp</result>
                         <result name="ERROR" type="redirectAction">admin</result>
                 </action>
                 <action name="addBook" class="action.BookAction" method="addBook">
-                        <result name="SUCCESS" type="redirectAction">preadd</result>
+                        <result name="SUCCESS">/WEB-INF/adminaddsuccess.jsp</result>
                         <result name="ERROR" type="redirectAction">admin</result>
-                </action>
-                <action name="searchByIsbn" class="action.BookAction" method="searchByIsbn">
-                        <result name="SUCCESS">/searchBook.jsp</result>
-                        <result name="ERROR">/searchBook.jsp</result>
                 </action>
                 <action name="advanceSearch" class="action.BookAction" method="advanceSearch">
                         <result name="SUCCESS" type="chain">admin</result>
@@ -65,29 +83,63 @@
                         <result name="ERROR" type="chain">admin</result>
                 </action>
                 <action name="admin" class="action.BookAction" method="getCat">
-                        <result name="SUCCESS">/admin2.jsp</result>
+                        <result name="SUCCESS">/WEB-INF/admin2.jsp</result>
                         <result name="ERROR">/index.jsp</result>
                 </action>
                 <action name="detail" class="action.BookAction" method="getDetail">
-                        <result name="SUCCESS">/admindetail.jsp</result>
+                        <result name="SUCCESS">/WEB-INF/admindetail.jsp</result>
                         <result name="ERROR" type="redirectAction">admin</result>
                 </action>
                 <action name="preupd" class="action.BookAction" method="preupd">
-                        <result name="SUCCESS">/adminupdate.jsp</result>
+                        <result name="SUCCESS">/WEB-INF/adminupdate.jsp</result>
                         <result name="ERROR" type="redirectAction">admin</result>
                 </action>
                 <action name="updBook" class="action.BookAction" method="updBook">
                         <result name="SUCCESS" type="redirectAction">admin</result>
-                        <result name="NOFIND">/updBook.jsp</result>
-                        <result name="ERROR">/updBook.jsp</result>
+                        <result name="NOFIND" type="redirectAction">admin</result>
+                        <result name="ERROR" type="redirectAction">admin</result>
                 </action>
                 <action name="del" class="action.BookAction" method="delBook">
                         <result name="SUCCESS" type="redirectAction">admin</result>
                         <result name="ERROR" type="redirectAction">admin</result>
                 </action>
                 <action name="crawler" class="action.BookAction" method="crawler">
-                        <result name="SUCCESS">/adminadd.jsp</result>
-                        <result name="ERROR">/addBook2.jsp</result>
+                        <result name="SUCCESS">/WEB-INF/adminadd.jsp</result>
+                        <result name="ERROR" type="redirectAction">admin</result>
+                </action>
+                <action name="addUser" class="action.UserAction" method="addUser">
+                        <result name="SUCCESS">/WEB-INF/useraddsuccess.jsp</result>
+                        <result name="ERROR">/WEB-INF/usermanagement.jsp</result>
+                </action>
+                <action name="queryUserInfo" class="action.UserAction" method="queryUserInfo">
+                        <result name="NORESULT">/WEB-INF/usermanagement.jsp</result>
+                        <result name="SUCCESS">/WEB-INF/usermanagement.jsp</result>
+                        <result name="ERROR">/login.jsp</result>
+                </action>
+                <action name="preborrow" class="action.UserAction" method="queryUserInfo">
+                        <result name="SUCCESS">/WEB-INF/borrow.jsp</result>
+                        <result name="ERROR">/WEB-INF/borrow.jsp</result>
+                        <result name="input">/WEB-INF/borrow.jsp</result>
+                </action>
+
+                <action name="borrow" class="action.UserAction"  method="borrow">
+                        <result name="SUCCESS" type="redirectAction">
+                                <param name="actionName">preborrow</param>
+                                <param name="uid">${uid}</param>
+                        </result>
+                        <result name="ERROR">/WEB-INF/borrow.jsp</result>
+                        <result name="input">/WEB-INF/borrow.jsp</result>
+                </action>
+                <action name="prereturn" class="action.UserAction" method="queryUserInfo">
+                        <result name="SUCCESS">/WEB-INF/return.jsp</result>
+                        <result name="ERROR">/WEB-INF/return.jsp</result>
+                </action>
+                <action name="return" class="action.UserAction" method="breturn">
+                        <result name="SUCCESS" type="chain">
+                                <param name="actionName">prereturn</param>
+                                <param name="uid">${user.uid}</param>
+                        </result>
+                        <result name="ERROR">/WEB-INF/return.jsp</result>
                 </action>
         </package>
 </struts>
